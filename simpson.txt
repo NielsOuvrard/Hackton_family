@@ -1,0 +1,17 @@
+Abraham
+A
+B
+C
+Homer
+Marge
+Bart
+Lisa
+Maggy
+#
+Abraham_A-Homer
+Homer_Marge
+#
+B_C-Marge
+Homer_Marge-Bart
+Homer_Marge-Lisa
+Homer_Marge-Maggy
