@@ -56,40 +56,56 @@ list_s *add_new_node (list_s *list, char *name)
 
 int main (int ac, char **av)
 {
+    // * array du fichier
     char **src = filepath_to_arr(av[1]);
-    // my_show_word_array(src);
     int index = 0;
+
+    // * personnes dans noeuds individuels tree_s
     list_s *list_names = NULL;
     for (int i = 0; src[i] && src[i][0] != '#'; i++, index++)
         list_names = add_new_node(list_names, src[i]);
 
-
-    my_printf("Valeures\n");
-    list_s *expl = list_names;
-    while (expl) {
-        my_printf("Name : %s\n", expl->perso->name);
-        expl = expl->next;
-    }
-
-
-    index++;
-    my_printf("\n");
-    for (int i = index; src[i] && src[i][0] != '#'; i++, index++) {
+    // * on relie les noeuds à leurs couples
+    for (int i = ++index; src[i] && src[i][0] != '#'; i++, index++) {
+        // on parse dans un array selon les '_'
         char **parse = my_str_parse(src[i], "_");
+        // parse 1 = conj 1
+        // Parse 2 = conj 2
         tree_s *perso1 = where_is_it(list_names, parse[0]);
         tree_s *perso2 = where_is_it(list_names, parse[1]);
         if (perso1 && perso2) {
-            my_printf("%s conj %s\n", parse[0], parse[1]);
             perso2->conjoint = perso1;
             perso1->conjoint = perso2;
         }
         free_my_arr(parse);
     }
-    my_printf("\n");
+
+    // * on relie les couples à leurs enfants
+    for (int i = ++index; src[i] && src[i][0] != '#'; i++, index++) {
+        // on parse dans un array selon les '_' et les '-'
+        char **parse = my_str_parse(src[i], "_-");
+        // parse 1 = Pere
+        // Parse 2 = Mere
+        // Parse 3 = Enfant
+
+
+        // * a coder ici
+        // tree_s *perso1 = where_is_it(list_names, parse[0]);
+        // tree_s *perso2 = where_is_it(list_names, parse[1]);
+        // if (perso1 && perso2) {
+            // my_printf("%s conj %s\n", parse[0], parse[1]);
+        //     perso2->conjoint = perso1;
+        //     perso1->conjoint = perso2;
+        // }
+        free_my_arr(parse);
+    }
+    // my_printf("\n");
 
     // for (int i = 0; i < names; i++)
     //     my_printf("perso %s\t conjoint = %s\n", list_names[i].name, list_names[i].conjoint);
-    expl = list_names;
+
+    // * on affiche le tout
+    list_s *expl = list_names;
     while (expl) {
         my_printf("-> %s conj %s\n", expl->perso->name, expl->perso->conjoint ? expl->perso->conjoint->name : NULL);
         expl = expl->next;
