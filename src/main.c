@@ -23,6 +23,67 @@ void ajoute_un_enfant (tree_s *parent, tree_s *enfant)
     parent->nbr_enfants++;
 }
 
+int deep_tree (tree_s* node)
+{
+    if (node == NULL)
+        return -1;
+    int deep = 0;
+    for (int i = 0; i < node->nbr_enfants; i++) {
+        int tmp;
+        if ((tmp = deep_tree(node->enfants[i])) > deep)
+            deep = tmp;
+    }
+    return deep + 1;
+}
+
+int le_plus_haut_dans_arbre (list_s *list_names)
+{
+    int deep = 0, id = 0, id_most_deep = 0;
+    while (list_names) {
+        // my_printf("profondeur de %s\n", list_names->perso->name);
+        int tmp;
+        if ((tmp = deep_tree(list_names->perso)) > deep) {
+            deep = tmp;
+            id_most_deep = id;
+        }
+        // my_printf("%d\n\n", );
+        list_names = list_names->next;
+        id++;
+    }
+    return id_most_deep;
+}
+
+void disp_enfants (tree_s *node);
+
+void disp_conjoint (tree_s *node)
+{
+    my_printf("%s - %s\n", node->name, node->conjoint ? node->conjoint->name : NULL);
+    my_printf("   |\n");
+    disp_enfants(node);
+}
+
+void disp_enfants (tree_s *node)
+{
+    for (int i = 0; i < node->nbr_enfants; i++) {
+        if (node->enfants[i]->conjoint) {
+            disp_conjoint(node->enfants[i]);
+        } else {
+            my_printf("%s", node->enfants[i]->name);
+            for (int j = 0; j < node->nbr_enfants; j++)
+                my_putchar(' ');
+        }
+    }
+}
+
+void print_according_to_tree (list_s *list_names)
+{
+    list_s *most_old = list_names;
+    int deep = le_plus_haut_dans_arbre(list_names);
+    for (int i = 0; i < deep; i++)
+        most_old = most_old->next;
+    disp_conjoint(most_old->perso);
+}
+
 int main (int ac, char **av)
 {
     // * array du fichier
@@ -69,7 +130,10 @@ int main (int ac, char **av)
     }
 
     // * afficher
-    print_all_perso(list_names);
+    // print_all_perso(list_names);
+
+    print_according_to_tree(list_names);
+    my_putchar('\n');
 
     // * free
     free_all_perso(list_names);
