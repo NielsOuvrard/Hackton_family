@@ -46,16 +46,14 @@ int count_char_parse (char *str, char *part)
 
 char **my_str_parse (char *str, char *part)
 {
-    int y = count_char_parse(str, part), x = 0, index_tab = 0;
+    int y = count_char_parse(str, part), x, index_tab = 0;
     char **tab = malloc(sizeof(char *) * (y + 1));
     for (int i = 0; str[i] != '\0'; i++) {
         while (str[i] && existe_in_part(part, str[i]) == 1)
             i++;
-        char printaaa = i + '0';
         for (x = 0; str[i + x] && existe_in_part(part, str[i + x]) == 0; x++);
         tab[index_tab] = malloc(sizeof(char) * (x + 1));
-        int k;
-        for (k = 0; str[k + i] && k < x; k++)
+        for (int k = 0; str[k + i] && k < x; k++)
             tab[index_tab][k] = str[i + k];
         tab[index_tab++][x] = '\0';
         i += x - 1;
