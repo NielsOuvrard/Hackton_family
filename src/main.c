@@ -6,53 +6,7 @@
 */
 
 #include "my.h"
-
-#include <stdlib.h>
-#include <time.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <stdbool.h>
-#include <stdio.h>
-
-typedef struct tree_s {
-    char *name;
-    int nbr_enfants;
-    struct tree_s *conjoint;
-    // struct tree_s *parents;
-    struct tree_s **enfants;
-} tree_s;
-
-typedef struct list_s {
-    tree_s *perso;
-    struct list_s *next;
-} list_s;
-
-char **filepath_to_arr(char *filepath);
-
-char **my_str_parse (char *str, char *part);
-
-tree_s *where_is_it (list_s *list, char *name)
-{
-    while (list) {
-        if (!my_strvcmp(list->perso->name, name))
-            return list->perso;
-        list = list->next;
-    }
-    return NULL;
-}
-
-list_s *add_new_node (list_s *list, char *name)
-{
-    list_s *new = malloc(sizeof(list_s));
-    new->perso = malloc(sizeof(tree_s));
-    new->perso->name = name;
-    new->perso->nbr_enfants = 0;
-    new->perso->conjoint = NULL;
-    new->perso->enfants = NULL;
-    // new->perso->parents = NULL;
-    new->next = list;
-    return new;
-}
+#include "jam_familly.h"
 
 void ajoute_un_enfant (tree_s *parent, tree_s *enfant)
 {
@@ -61,39 +15,12 @@ void ajoute_un_enfant (tree_s *parent, tree_s *enfant)
     for (int j = 0; j < parent->nbr_enfants; j++)
         enfants_perso1[j] = parent->enfants[j];
     enfants_perso1[parent->nbr_enfants] = enfant;
+    // enfant->parents = parent;
     // si on avait déjà créé un tableau d'enfant, on le free
     if (parent->nbr_enfants > 0)
         free(parent->enfants);
     parent->enfants = enfants_perso1;
     parent->nbr_enfants++;
-}
-
-void print_all_perso (list_s *list)
-{
-    // * on affiche le tout
-    while (list) {
-        my_printf("%sNAME : %s\n%s", MY_COLOR_BLUE, list->perso->name, MY_COLOR_RESET);
-        my_printf("conj    :\t%s\n", list->perso->conjoint ? list->perso->conjoint->name : NULL);
-        my_printf("enfants :\t");
-        for (int i = 0; i < list->perso->nbr_enfants; i++)
-            my_printf("%s\t", list->perso->enfants[i]->name);
-        my_printf("\n\n\n");
-        list = list->next;
-    }
-}
-
-void free_all_perso (list_s *list)
-{
-    // * on affiche le tout
-    while (list) {
-        list_s *tmp = list;
-        list = list->next;
-        free(tmp->perso->name);
-        if (tmp->perso->nbr_enfants > 0)
-            free(tmp->perso->enfants);
-        free(tmp->perso);
-        free(tmp);
-    }
 }
 
 int main (int ac, char **av)
@@ -135,7 +62,9 @@ int main (int ac, char **av)
         if (!perso1 || !perso2 || !enfant) // gestion d'erreure
             return 84;
         ajoute_un_enfant(perso1, enfant);
+        enfant->parent_1 = perso1;
         ajoute_un_enfant(perso2, enfant);
+        enfant->parent_2 = perso2;
         free_my_arr(parse);
     }
 
